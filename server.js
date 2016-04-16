@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const httpProxy = require('http-proxy');
+const https = require("https");
 
 const isProduction = process.env.NODE_ENV === 'production';
 const port = isProduction ? process.env.PORT || 4000 : 3000;
@@ -81,6 +82,32 @@ if (!isProduction) {
 
 app.all('/', function (req, res) {
     res.sendFile(`${publicPath}/index.html`);
+});
+
+app.get("/search/:name", function(req, res) {
+    const name = req.params.name;
+    const api_key = "8093a083-3e82-4248-8251-321a13564783";
+    var options = {
+        hostname: "na.api.pvp.net",
+        port: 443,
+        path: "/api/lol/na/v1.4/summoner/36000569?api_key=" + api_key,
+        method: "GET"
+    };
+
+    var rq = https.request(options, (rs) => {
+        console.log('statusCode: ', rs.statusCode);
+        console.log('headers: ', rs.headers);
+
+        rs.on('data', (d) => {
+           res.json(JSON.parse(d));
+        });
+    });
+
+    rq.end();
+
+    rq.on('error', (e) => {
+        console.log(e);
+    })
 });
 
 app.listen(port, function () {
