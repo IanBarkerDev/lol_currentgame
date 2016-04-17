@@ -90,7 +90,7 @@ app.get("/search/:name", function(req, res) {
     var options = {
         hostname: "na.api.pvp.net",
         port: 443,
-        path: "/api/lol/na/v1.4/summoner/36000569?api_key=" + api_key,
+        path: "/observer-mode/rest/consumer/getSpectatorGameInfo/NA1/" + name + "?api_key=" + api_key,
         method: "GET"
     };
 

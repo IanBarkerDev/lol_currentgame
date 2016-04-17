@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 
-//import MainDisplay from 'components/MainDisplay';
+import MainDisplay from 'components/MainDisplay';
 
 class Home extends Component {
     constructor () {
         super();
         this.state = {
-            currName: ""
+            currName: "",
+            currGame: {participants: [], bannedChampions: []},
+            team1: [],
+            team2: []
         }
     };
 
@@ -27,9 +30,23 @@ class Home extends Component {
             type: "get",
 
             success: function(d) {
-                console.log(d);
-            }
+                this.setState({
+                    currGame: d,
+                    team1: this.createTeam(d.participants, 1),
+                    team2: this.createTeam(d.participants, 2)
+                });
+            }.bind(this)
         })
+    };
+
+    createTeam = (arr, num) => {
+        var team = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].teamId === num * 100) {
+                team.push(arr[i]);
+            }
+        }
+        return team;
     };
 
 
@@ -37,9 +54,11 @@ class Home extends Component {
         return (
             <div className="home">
                 <div className="search-bar">
+                    22277779
                     <input className="search-input" type="text" placeholder="Summoner Name" onChange={this.updateCurrName} />
                     <button className="search-submit" type="button" onClick={this.submitCurrName} >Search</button>
                 </div>
+                <MainDisplay banArray={this.state.currGame.bannedChampions} team1={this.state.team1} team2={this.state.team2} />
             </div>
         )
     }
